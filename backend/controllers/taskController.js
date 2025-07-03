@@ -1,8 +1,17 @@
 import Task from '../models/Task.js';
 
 export const getAllTasks = async (req, res) => {
-  const tasks = await Task.find({ assignedTo: req.user._id }).populate('assignedTo', 'name');
-  res.json(tasks);
+  try {
+    const tasks =
+      req.user.role === 'admin'
+        ? await Task.find({}).populate('assignedTo', 'name')
+        : await Task.find({ assignedTo: req.user._id }).populate('assignedTo', 'name');
+
+    res.json(tasks);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch tasks' });
+  }
 };
 
 export const createTask = async (req, res) => {

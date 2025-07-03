@@ -31,7 +31,14 @@ export const registerUser = async (req, res) => {
     token: generateToken(user._id),
   });
 };
-
+export const getAllStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: 'student' }).select('name _id');
+    res.json(students);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to load students' });
+  }
+};
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
